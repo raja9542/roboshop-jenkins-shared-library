@@ -22,7 +22,7 @@ def unittests() {
     }
 
     if(app_lang == "maven") {
-        sh 'mvn clean package'
+        sh 'mvn test'
     }
     if(app_lang == "golang"){
         sh 'rm go.mod'
