@@ -7,7 +7,7 @@ def compile() {
         sh 'mvn clean package'
     }
     if(app_lang == "golang"){
-        sh 'go mod tidy'
+        sh 'rm go.mod'
         sh 'go mod init ${component}'
         sh 'go get'
         sh 'go build'
