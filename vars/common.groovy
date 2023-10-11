@@ -27,10 +27,8 @@ def unittests() {
         sh 'python3 -m unittest'
     }
     if(app_lang == "golang"){
-        sh 'rm go.mod'
-        sh 'go mod init ${component}'
-        sh 'go get'
-        sh 'go build'
+        sh 'go test'
+
     }
 }
 
