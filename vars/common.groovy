@@ -17,7 +17,12 @@ def compile() {
 def unittests() {
     if (app_lang == "nodejs") {
         //Developer is Missing unit test cases in our project, He need to add them as of best practice
-        sh 'npm test || true'
+       try{
+           sh 'npm test'
+       } catch(Exception e) {
+           common.email("Unit tests failed")
+       }
+
     }
 
     if(app_lang == "maven") {
@@ -32,6 +37,8 @@ def unittests() {
         sh 'go get'
         sh 'go build'
     }
+}
 
-
+def email(email_note) {
+    sh 'echo ${email_note}'
 }
