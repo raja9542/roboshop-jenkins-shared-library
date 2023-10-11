@@ -24,6 +24,9 @@ def unittests() {
     if(app_lang == "maven") {
         sh 'mvn test'
     }
+    if(app_lang == "python") {
+        sh 'python3 -m unittest'
+    }
     if(app_lang == "golang"){
         sh 'rm go.mod'
         sh 'go mod init ${component}'
