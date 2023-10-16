@@ -31,8 +31,12 @@ def call() {
                         SONAR_PASS = '$(aws ssm get-parameters --region us-east-1 --names sonarqube.pass --with-decryption --query Parameters[0].Value | sed \'s/"//g\')'
                     }
                     steps {
-
-                      sh "sonar-scanner -Dsonar.host.url=http://172.31.45.15:9000 -Dsonar.login=${SONAR_USER}  -Dsonar.password=${SONAR_PASS} -Dsonar.projectKey=cart"
+                        script {
+                            wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: "${SONAR_PASS}", var: 'SECRET']]]) {
+                                println "Password: ${SONAR_PASS}"
+                                sh "sonar-scanner -Dsonar.host.url=http://172.31.45.15:9000 -Dsonar.login=${SONAR_USER}  -Dsonar.password=${SONAR_PASS} -Dsonar.projectKey=cart"
+                            }
+                        }
                     }
                 }
 
@@ -43,11 +47,12 @@ def call() {
                 }
 
             }
-        }
-    } catch(Exception e) {
+            }
+        } catch (Exception e) {
         common.email("Failed")
     }
 }
+
 
 
 
@@ -93,4 +98,4 @@ def call() {
 //
 //        }
 //    }
-//}
+// }
