@@ -3,7 +3,7 @@ def call() {
         node('workstation') {
 
             stage('Checkout'){
-                git branch: 'main', url: 'https://github.com/raja9542/${component}.git'
+                git branch: 'main', url: 'https://github.com/raja9542/"${component}".git'
             }
 
             stage('Compile/Build') {
