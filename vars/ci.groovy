@@ -9,6 +9,7 @@ def call() {
 
             stage('Checkout'){
                git branch: 'main', url: "https://github.com/raja9542/${component}.git"
+                sh 'env'
             }
 
             stage('Compile/Build') {
