@@ -37,9 +37,16 @@ def email(email_note) {
     mail bcc: '', body: "JOB FAILED - ${JOB_BASE_NAME} \n Jenkins URL- ${JOB_URL}", cc: '', from: 'rajasekhar1banda@gmail.com', replyTo: '', subject: 'Jenkins Job Failed', to: 'rajasekhar1banda@gmail.com'
 }
 def artifactPush() {
+    sh "echo ${TAG_NAME} >VERSION"
     if (app_lang == "nodejs") {
 
-        sh "zip -r cart-${TAG_NAME}.zip node_modules server.js"
+        sh "zip -r ${component}-${TAG_NAME}.zip node_modules server.js VERSION"
     }
     sh "ls -l"
+    NEXUS_PASS = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.pass  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
+    NEXUS_USER = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.user  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
+    wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: "${NEXUS_PASS}", var: 'SECRET']]]) {
+        sh "curl -v -u {NEXUS_USER}:{NEXUS_PASS} --upload-file ${component}-${TAG_NAME}.zip http://172.31.40.116:8081/repository/${component}/${component}-${TAG_NAME}.zip"
+    }
+
 }
