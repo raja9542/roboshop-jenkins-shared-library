@@ -5,7 +5,7 @@ def compile() {
     }
 
     if(app_lang == "maven") {
-        sh 'mvn clean package'
+        sh "mvn clean package && cp target/${component}-1.0.jar ${component}.jar"
     }
     if(app_lang == "golang"){
         sh 'rm go.mod'
@@ -36,13 +36,21 @@ def unittests() {
 def email(email_note) {
     mail bcc: '', body: "JOB FAILED - ${JOB_BASE_NAME} \n Jenkins URL- ${JOB_URL}", cc: '', from: 'rajasekhar1banda@gmail.com', replyTo: '', subject: 'Jenkins Job Failed', to: 'rajasekhar1banda@gmail.com'
 }
+
 def artifactPush() {
+
     sh "echo ${TAG_NAME} >VERSION"
+
     if (app_lang == "nodejs") {
         sh "zip -r ${component}-${TAG_NAME}.zip node_modules server.js VERSION ${extraFiles}"
     }
+
     if (app_lang == "nginx" || app_lang == "python") {
-        sh "zip -r ${component}-${TAG_NAME}.zip * -x Jenkinsfile"
+        sh "zip -r ${component}-${TAG_NAME}.zip * -x Jenkinsfile ${extraFiles}"
+    }
+
+    if (app_lang == "maven") {
+        sh "zip -r ${component}-${TAG_NAME}.zip * ${component}.jar VERSION ${extraFiles}"
     }
 
     NEXUS_PASS = sh(script: 'aws ssm get-parameters --region us-east-1 --names nexus.pass  --with-decryption --query Parameters[0].Value | sed \'s/"//g\'', returnStdout: true).trim()
