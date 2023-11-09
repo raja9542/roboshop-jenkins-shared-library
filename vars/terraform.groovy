@@ -16,22 +16,16 @@ def call() {
 
         stages {
             stage('Terraform Init') {
-                steps{
+                steps {
                     sh "terraform init -backend-config=env-${INFRA_ENV}/state.tfvars"
                 }
             }
 
             stage('Terraform Apply') {
-                steps{
+                steps {
                     sh "terraform apply -auto-approve -var-file=env-${INFRA_ENV}/main.tfvars"
                 }
             }
-
-//            stage('Terraform Destroy') {
-//                steps{
-//                    sh "terraform destroy -auto-approve -var-file=env-${INFRA_ENV}/main.tfvars"
-//                }
-//            }
         }
 
         post {
