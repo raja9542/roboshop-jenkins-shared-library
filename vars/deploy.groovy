@@ -15,7 +15,7 @@ def call() {
             stage('Run Deployment'){
 
                 steps{
-// to update/overwrite app version we use this
+// to update/overwrite app version in parameter store we use this
                     sh '''aws ssm put-parameter --name "${APP_ENV}.${COMPONENT}.APP_VERSION" --type "String" --value "${APP_VERSION}" --overwrite '''
                 }
 
